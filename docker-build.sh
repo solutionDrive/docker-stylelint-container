@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
-docker build .
+docker build \
+    -t solutiondrive/stylelint:latest \
+    .
