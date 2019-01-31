@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+if [[ -z "${PLUGIN_PATH}" ]]; then
+    echo "ERROR: path is missing";
+    exit 1;
+fi
+
+# enter der workdir
+cd $PLUGIN_BASE_WORKDIR
+
+# add ignore if it is set
+if [[ ! -z "${PLUGIN_IGNORE}" ]]; then
+    PLUGIN_CLI="${PLUGIN_CLI} --ignore-path ${PLUGIN_IGNORE}"
+fi
+
+if [[ "${PLUGIN_QUIET}" == true ]]; then
+    PLUGIN_CLI="${PLUGIN_CLI} --quiet"
+fi
+
+
+# show the command we use
+set -x
+
+# execute command
+stylelint ${PLUGIN_CLI}
+
+# hide the following from the user
+{
+    return_code=$?
+    # if it returns 80 no files where found. its ok for new projects.
+    if [ $return_code == 80 ]; then
+        exit 0
+    else
+        exit $return_code
+    fi
+} 2> /dev/null
